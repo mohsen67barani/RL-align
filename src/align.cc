@@ -108,6 +108,94 @@ void add_constraints(problem & prob,
   int md = (cfg->MAX_DIST!=0 ? cfg->MAX_DIST : 2*g.get_num_nodes()); 
 
   int M = trace.size();
+  for (int v = 1; v < M - 1; ++v ) {
+    int vb; 
+    int va;
+    vb = v - 1;
+    va = v + 1;
+    for (int lbvb=0; lbvb<prob.get_num_labels(vb); ++lbvb) {
+      for (int lbv=0; lbv<prob.get_num_labels(v); ++lbv) {
+        for (int lbva=0; lbva<prob.get_num_labels(va); ++lbva) { 
+
+          string t1 =prob.get_label_name(vb,lbvb);
+          string t2 =prob.get_label_name(v,lbv);
+          string t3 =prob.get_label_name(va,lbva);
+
+          if (t1 == graph::DUMMY or t2 == graph::DUMMY or t3 == graph::DUMMY )
+            continue;
+
+          else if (bp.get_relation(t1,t2)==behavioral_profile::PRECEDES and bp.get_relation(t2,t3)==behavioral_profile::PRECEDES) {
+            if (cfg->two_ORDER_COMPAT!=0) {
+
+              double diff12;
+              double diff23;
+              diff12 = distance_balance(vb, lbvb, v, lbv, g, prob, cfg->ORDER_PROGRESSIVE);
+              diff23 = distance_balance(v, lbv, va, lbva, g, prob, cfg->ORDER_PROGRESSIVE);
+
+              TRACE(4, "Order compatibility constraint. diff="<<diff12);
+
+              prob.add_constraint(v, lbv, {{make_pair(vb,lbvb)}, {make_pair(va,lbva)}}, cfg->two_ORDER_COMPAT/(diff12+diff23));
+            }
+          }
+
+          else if (bp.get_relation(t1,t2)==behavioral_profile::PRECEDES and bp.get_relation(t2,t3)==behavioral_profile::INTERLEAVED) {
+            if (cfg->PARALLEL_ORDER__COMPAT!=0) {
+
+               double diff12;
+               diff12 = distance_balance(vb, lbvb, v, lbv, g, prob, cfg->ORDER_PROGRESSIVE);
+               TRACE(4, "Order compatibility constraint. diff="<<diff12);
+               double diff23;
+              
+                if (bptf.get_relation(t2,t3)==behavioral_profile::INTERLEAVED) diff23 = 1;
+                else diff23 = distance_balance(v, lbv, va, lbva, g, prob, cfg->PARALLEL_PROGRESSIVE);
+
+                prob.add_constraint(v, lbv, {{make_pair(vb,lbvb)}, {make_pair(va,lbva)}},  cfg->PARALLEL_ORDER__COMPAT/(diff12+diff23));
+               }
+           }
+
+          else if (bp.get_relation(t1,t2)==behavioral_profile::INTERLEAVED and bp.get_relation(t2,t3)==behavioral_profile::INTERLEAVED) {
+          if (cfg->two_PARALLEL_COMPAT!=0) {
+
+            TRACE(4, "Parallel compatibility constraint");
+
+            double diff12;
+            if (bptf.get_relation(t1,t2)==behavioral_profile::INTERLEAVED) diff12 = 1;
+            else diff12 = distance_balance(vb, lbvb, v, lbv, g, prob, cfg->PARALLEL_PROGRESSIVE);
+
+            double diff23;
+            if (bptf.get_relation(t2,t3)==behavioral_profile::INTERLEAVED) diff23 = 1;
+            else diff23 = distance_balance(v, lbv, va, lbva, g, prob, cfg->PARALLEL_PROGRESSIVE);
+
+            prob.add_constraint(v, lbv, {{make_pair(vb,lbvb)}, {make_pair(va,lbva)}},  cfg->two_PARALLEL_COMPAT/(diff12+diff23));
+              
+
+          }
+        }
+         else
+        {
+          if (bp.get_relation(t1,t2)==behavioral_profile::INTERLEAVED and bp.get_relation(t2,t3)==behavioral_profile::PRECEDES) {
+            if (cfg->PARALLEL_ORDER__COMPAT!=0) {
+            TRACE(4, "Parallel compatibility constraint");
+             double diff12;
+              // "real" paralels get no penalty for long paths
+             if (bptf.get_relation(t1,t2)==behavioral_profile::INTERLEAVED) diff12 = 1;
+             else diff12 = distance_balance(vb, lbvb, v, lbv, g, prob, cfg->PARALLEL_PROGRESSIVE);
+             
+            
+              double diff23;
+              diff23 = distance_balance(v, lbv, va, lbva, g, prob, cfg->ORDER_PROGRESSIVE);
+              TRACE(4, "Order compatibility constraint. diff="<<diff23);
+
+              prob.add_constraint(v, lbv, {{make_pair(vb,lbvb)}, {make_pair(va,lbva)}},  cfg->PARALLEL_ORDER__COMPAT/(diff12+diff23));
+
+            }
+          }
+        } 
+
+      }
+     }
+    } 
+   }
   for (int ev1=0; ev1<M; ++ev1) {
     for (int ev2=ev1+1; ev2<=std::min(M-1, ev1+md); ++ev2) {
       for (int lb1=0; lb1<prob.get_num_labels(ev1); ++lb1) {

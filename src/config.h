@@ -53,6 +53,9 @@ class config {
     double PARALLEL_COMPAT = +5.0;
     bool PARALLEL_PROGRESSIVE = false;
     double REPEAT_COMPAT = -5.0;
+    double two_ORDER_COMPAT = 2*ORDER_COMPAT;
+    double two_PARALLEL_COMPAT = 2*PARALLEL_COMPAT;
+    double PARALLEL_ORDER__COMPAT = REPEAT_COMPAT + ORDER_COMPAT;
     int MAX_DIST = 3;
     
     // options about unfolding BP
