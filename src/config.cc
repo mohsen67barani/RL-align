@@ -43,6 +43,7 @@ config::config() {
 
 ///////////////////////////////////////////////////////
 /// read command line arguments and configuration file 
+/// adding three new parameters namely Two_ORDER_COMPAT, double Two_PARALLEL_COMPAT, PARALLEL_ORDER__COMPAT
 
 config::config(const string &fconfig) {
 
@@ -63,6 +64,9 @@ config::config(const string &fconfig) {
     else if (key == "ExclusiveCompatibility") EXCLUSIVE_COMPAT=std::stod(val);
     else if (key == "CrossCompatibility") CROSS_COMPAT=std::stod(val);
     else if (key == "RepeatCompatibility") REPEAT_COMPAT=std::stod(val);
+    else if (key == "TorderCompatibility") Two_ORDER_COMPAT=std::stod(val);
+    else if (key == "TparallelCompatibility") Two_PARALLEL_COMPAT=std::stod(val);
+    else if (key == "OrderParallelCompatibility") PARALLEL_ORDER__COMPAT=std::stod(val);
     else if (key == "MaximumDistance") MAX_DIST = std::stoi(val);
     else if (key == "OrderCompatibility") {
       ORDER_COMPAT=std::stod(val);
@@ -75,6 +79,30 @@ config::config(const string &fconfig) {
       string type;
       sin >> type;
       PARALLEL_PROGRESSIVE = (type=="1/dist");
+    }
+
+    else if (key == "TorderCompatibility") {
+      Two_ORDER_COMPAT=std::stod(val);
+      string type;
+      sin >> type;
+      Two_ORDER_PROGRESSIVE = (type=="1/dist");
+
+    }
+
+     else if (key == "TparallelCompatibility") {
+      Two_PARALLEL_COMPAT=std::stod(val);
+      string type;
+      sin >> type;
+      Two_PARALLEL_PROGRESSIVE = (type=="1/dist");
+
+    }
+
+    else if (key == "OrderParallelCompatibility") {
+      PARALLEL_ORDER__COMPAT=std::stod(val);
+      string type;
+      sin >> type;
+      PARALLEL_ORDER_PROGRESSIVE = (type=="1/dist");
+
     }
  
     else if (key == "RL_MaxIter") MAX_ITER = std::stoi(val);
@@ -95,6 +123,9 @@ config::config(const string &fconfig) {
   TRACE(2,"  RepeatCompatibility = " <<  REPEAT_COMPAT);
   TRACE(2,"  OrderCompatibility = " << ORDER_COMPAT << " progressive:" << ORDER_PROGRESSIVE);
   TRACE(2,"  ParallelCompatibility = " << PARALLEL_COMPAT << " progressive:" << PARALLEL_PROGRESSIVE);
+  TRACE(2,"  TorderCompatibility = " << Two_ORDER_COMPAT << " progressive:" << Two_ORDER_PROGRESSIVE);
+  TRACE(2,"  TparallelCompatibility = " << Two_PARALLEL_COMPAT << " progressive:" << Two_PARALLEL_PROGRESSIVE);
+  TRACE(2,"  OrderParallelCompatibility = " << PARALLEL_ORDER__COMPAT << " progressive:" << PARALLEL_ORDER_PROGRESSIVE);
   TRACE(2,"  MaximumDistance = " << MAX_DIST);
   TRACE(2,"  AddIFS = " << ADD_IFS);
   TRACE(2,"  AddLOOPS = " << ADD_LOOPS);

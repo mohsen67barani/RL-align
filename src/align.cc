@@ -125,7 +125,7 @@ void add_constraints(problem & prob,
             continue;
 
           else if (bp.get_relation(t1,t2)==behavioral_profile::PRECEDES and bp.get_relation(t2,t3)==behavioral_profile::PRECEDES) {
-            if (cfg->two_ORDER_COMPAT!=0) {
+            if (cfg->Two_ORDER_COMPAT!=0) {
 
               double diff12;
               double diff23;
@@ -134,7 +134,7 @@ void add_constraints(problem & prob,
 
               TRACE(4, "Order compatibility constraint. diff="<<diff12);
 
-              prob.add_constraint(v, lbv, {{make_pair(vb,lbvb)}, {make_pair(va,lbva)}}, cfg->two_ORDER_COMPAT/(diff12+diff23));
+              prob.add_constraint(v, lbv, {{make_pair(vb,lbvb)}, {make_pair(va,lbva)}}, cfg->Two_ORDER_COMPAT/(diff12+diff23));
             }
           }
 
@@ -154,7 +154,7 @@ void add_constraints(problem & prob,
            }
 
           else if (bp.get_relation(t1,t2)==behavioral_profile::INTERLEAVED and bp.get_relation(t2,t3)==behavioral_profile::INTERLEAVED) {
-          if (cfg->two_PARALLEL_COMPAT!=0) {
+          if (cfg->Two_PARALLEL_COMPAT!=0) {
 
             TRACE(4, "Parallel compatibility constraint");
 
@@ -166,7 +166,7 @@ void add_constraints(problem & prob,
             if (bptf.get_relation(t2,t3)==behavioral_profile::INTERLEAVED) diff23 = 1;
             else diff23 = distance_balance(v, lbv, va, lbva, g, prob, cfg->PARALLEL_PROGRESSIVE);
 
-            prob.add_constraint(v, lbv, {{make_pair(vb,lbvb)}, {make_pair(va,lbva)}},  cfg->two_PARALLEL_COMPAT/(diff12+diff23));
+            prob.add_constraint(v, lbv, {{make_pair(vb,lbvb)}, {make_pair(va,lbva)}},  cfg->Two_PARALLEL_COMPAT/(diff12+diff23));
               
 
           }

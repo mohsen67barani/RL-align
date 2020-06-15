@@ -31,4 +31,6 @@ done
 
 wait
 
-#./bin/align ./data/unfoldings/M8 ./data/logs/M8.xes ./config/config.15.5.-100.-150.-300.cfg
+
+
+
